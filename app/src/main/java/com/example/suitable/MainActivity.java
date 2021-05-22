@@ -82,12 +82,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        TextView textview = findViewById(R.id.textview_top);
         setSupportActionBar(toolbar);
 
-        textview.setText("test");
 
-        
         // Instantiate the RequestQueue.
         requestQueue = Volley.newRequestQueue(this);
         String url = "http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial&appid=" + OWM_APIKEY;
