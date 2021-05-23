@@ -12,8 +12,6 @@ import androidx.fragment.app.Fragment;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -42,9 +40,9 @@ public class FirstFragment extends Fragment {
             "Jean Shirt", "Black Long T Shirt", "Black Jean Shirt",
     };
 
-    public static final String[] formalTops = {
-            "Beige Dress Shirt"
-    };
+//    public static final String[] formalTops = {
+//            "Beige Dress Shirt"
+//    };
 
     public static final String[] shortBottoms = {
             "Blue Chino Shorts", "Green Chino Shorts",
@@ -100,19 +98,9 @@ public class FirstFragment extends Fragment {
         getWeather();
         getNewOutfit();
 
-        view.findViewById(R.id.accept_outfit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                acceptOutfit();
-            }
-        });
+        view.findViewById(R.id.accept_outfit).setOnClickListener(view1 -> acceptOutfit());
 
-        view.findViewById(R.id.new_outfit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getNewOutfit();
-            }
-        });
+        view.findViewById(R.id.new_outfit).setOnClickListener(view12 -> getNewOutfit());
     }
 
     private void getWeather() {
@@ -122,31 +110,21 @@ public class FirstFragment extends Fragment {
         String url = "http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial&appid=" + OWM_APIKEY;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                (Request.Method.GET, url, null, response -> {
 
-                    @Override
-                    public void onResponse(JSONObject response) {
+                    try {
+                        JSONObject main = response.getJSONObject("main");
+                        Log.e(TAG, "Main: " + main.toString());
+                        feelsLike = Double.parseDouble(main.getString("feels_like"));
+                        humidity = Double.parseDouble(main.getString("humidity"));
 
-                        try {
-                            JSONObject main = response.getJSONObject("main");
-                            Log.e(TAG, "Main: " + main.toString());
-                            feelsLike = Double.parseDouble(main.getString("feels_like"));
-                            humidity = Double.parseDouble(main.getString("humidity"));
+                        Log.e(TAG, "Feels Like: " + feelsLike);
+                        Log.e(TAG, "Humidity: " + humidity);
 
-                            Log.e(TAG, "Feels Like: " + feelsLike);
-                            Log.e(TAG, "Humidity: " + humidity);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.e("MainActivity.java", "That didn't work");
-                    }
-                });
+                }, error -> Log.e("MainActivity.java", "That didn't work"));
 
         // Set the tag on the request.
         if (stringRequest != null) {
