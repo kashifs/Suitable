@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/top_name_display"
-        app:layout_constraintBottom_toTopOf="@id/button_first"
+        app:layout_constraintBottom_toTopOf="@id/textview_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,7 +20,9 @@
         android:id="@+id/textview_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
         android:text="@string/bottom_name_display"
+        app:layout_constraintBottom_toTopOf="@id/textview_zapato"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_top" />
@@ -29,18 +31,31 @@
         android:id="@+id/textview_zapato"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
         android:text="@string/zapato_name_display"
-        app:layout_constraintTop_toBottomOf="@id/textview_bottom"
+        app:layout_constraintBottom_toTopOf="@id/accept_outfit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_bottom" />
+
+    <Button
+        android:id="@+id/accept_outfit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="acceptOutfit"
+        android:text="@string/accept_outfit"
+        app:layout_constraintBottom_toTopOf="@id/new_outfit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button_first"
+        android:id="@+id/new_outfit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/next"
+        android:layout_marginBottom="96dp"
+        android:onClick="acceptOutfit"
+        android:text="@string/new_outfit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_zapato" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

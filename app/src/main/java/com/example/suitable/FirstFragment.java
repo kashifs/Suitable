@@ -73,6 +73,14 @@ public class FirstFragment extends Fragment {
     RequestQueue requestQueue;
     StringRequest stringRequest;
 
+    TextView textview_top;
+    TextView textview_bottom;
+    TextView textview_zapato;
+
+    double feelsLike;
+    double humidity;
+
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -82,11 +90,144 @@ public class FirstFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_first, container, false);
     }
 
+
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        textview_top = view.findViewById(R.id.textview_top);
+        textview_bottom = view.findViewById(R.id.textview_bottom);
+        textview_zapato = view.findViewById(R.id.textview_zapato);
+
+        getWeather();
+//        getOriginalOutfit(view);
+        getNewOutfit(view);
+
+
+
+        view.findViewById(R.id.accept_outfit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                acceptOutfit(view);
+            }
+        });
+
+        view.findViewById(R.id.new_outfit).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getNewOutfit(view);
+            }
+        });
+    }
+
+    private void getWeather() {
         // Instantiate the RequestQueue.
         requestQueue = Volley.newRequestQueue(getContext());
+
+        String url = "http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial&appid=" + OWM_APIKEY;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        try {
+                            JSONObject main = response.getJSONObject("main");
+                            Log.e(TAG, "Main: " + main.toString());
+                            feelsLike = Double.parseDouble(main.getString("feels_like"));
+                            humidity = Double.parseDouble(main.getString("humidity"));
+
+                            Log.e(TAG, "Feels Like: " + feelsLike);
+                            Log.e(TAG, "Humidity: " + humidity);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("MainActivity.java", "That didn't work");
+                    }
+                });
+
+        // Set the tag on the request.
+        if (stringRequest != null) {
+            stringRequest.setTag(TAG);
+        }
+
+        // Add the request to the RequestQueue.
+        if (requestQueue != null) {
+            requestQueue.add(jsonObjectRequest);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (requestQueue != null) {
+            requestQueue.cancelAll(TAG);
+        }
+    }
+
+    private void acceptOutfit(@NonNull View view) {
+        // Do something in response to button click
+//        this.onViewCreated(view, null);
+        Log.e(TAG, "In Accept Outfit");
+    }
+
+    private void getNewOutfit(@NonNull View view){
+        if (feelsLike >= 90) {
+
+            finalTop = shortTops[topsRand.nextInt(shortTops.length)];
+            finalBottom = shortBottoms[bottomsRand.nextInt(shortBottoms.length)];
+            finalZapato = zapatos[zapatosRand.nextInt(zapatos.length - 1)];
+
+            Log.e(TAG, "Today's Top: " + finalTop);
+            Log.e(TAG, "Today's Bottom: " + finalBottom);
+            Log.e(TAG, "Today's Zapato: " + finalZapato);
+
+        } else if (feelsLike <= 85 && feelsLike > 75) {
+
+            String[] allTops = Arrays.copyOf(shortTops, shortTops.length + longTops.length);
+            System.arraycopy(longTops, 0, allTops, shortTops.length, longTops.length);
+
+            String[] allBottoms = Arrays.copyOf(shortBottoms, shortBottoms.length + longBottoms.length);
+            System.arraycopy(longBottoms, 0, allBottoms, shortBottoms.length, longBottoms.length);
+
+            finalTop = allTops[topsRand.nextInt(allTops.length)];
+            finalBottom = allBottoms[bottomsRand.nextInt(allBottoms.length)];
+            finalZapato = zapatos[zapatosRand.nextInt(zapatos.length)];
+
+            Log.e(TAG, "Today's Top: " + finalTop);
+            Log.e(TAG, "Today's Bottom: " + finalBottom);
+            Log.e(TAG, "Today's Zapato: " + finalZapato);
+        } else {
+
+            String[] allTops = Arrays.copyOf(shortTops, shortTops.length + longTops.length);
+            System.arraycopy(longTops, 0, allTops, shortTops.length, longTops.length);
+
+            finalTop = allTops[topsRand.nextInt(allTops.length)];
+            finalBottom = longBottoms[bottomsRand.nextInt(longBottoms.length)];
+            finalZapato = zapatos[zapatosRand.nextInt(zapatos.length)];
+
+            Log.e(TAG, "Today's Top: " + finalTop);
+            Log.e(TAG, "Today's Bottom: " + finalBottom);
+            Log.e(TAG, "Today's Zapato: " + finalZapato);
+        }
+
+
+        textview_top.setText("Today it feels like " + feelsLike + "\n" + "Today's Top: " + finalTop);
+        textview_bottom.setText("Today's bottom: " + finalBottom);
+        textview_zapato.setText("Today's footwear: " + finalZapato);
+    }
+
+    private void getOriginalOutfit(@NonNull View view) {
+        // Instantiate the RequestQueue.
+        requestQueue = Volley.newRequestQueue(getContext());
+
         String url = "http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial&appid=" + OWM_APIKEY;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
@@ -99,8 +240,8 @@ public class FirstFragment extends Fragment {
 
                             JSONObject main = response.getJSONObject("main");
                             Log.e(TAG, "Main: " + main.toString());
-                            double feelsLike = Double.parseDouble(main.getString("feels_like"));
-                            double humidity = Double.parseDouble(main.getString("humidity"));
+                            feelsLike = Double.parseDouble(main.getString("feels_like"));
+                            humidity = Double.parseDouble(main.getString("humidity"));
 
                             Log.e(TAG, "Feels Like: " + feelsLike);
                             Log.e(TAG, "Humidity: " + humidity);
@@ -147,10 +288,6 @@ public class FirstFragment extends Fragment {
                                 Log.e(TAG, "Today's Zapato: " + finalZapato);
                             }
 
-                            TextView textview_top = view.findViewById(R.id.textview_top);
-                            TextView textview_bottom = view.findViewById(R.id.textview_bottom);
-                            TextView textview_zapato = view.findViewById(R.id.textview_zapato);
-
                             textview_top.setText("Today it feels like " + feelsLike + "\n" + "Today's Top: " + finalTop);
                             textview_bottom.setText("Today's bottom: " + finalBottom);
                             textview_zapato.setText("Today's footwear: " + finalZapato);
@@ -177,21 +314,6 @@ public class FirstFragment extends Fragment {
         // Add the request to the RequestQueue.
         if (requestQueue != null) {
             requestQueue.add(jsonObjectRequest);
-        }
-
-
-        view.findViewById(R.id.button_first).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            }
-        });
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (requestQueue != null) {
-            requestQueue.cancelAll(TAG);
         }
     }
 
