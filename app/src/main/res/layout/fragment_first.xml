@@ -52,7 +52,6 @@
         android:id="@+id/new_outfit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="96dp"
         android:onClick="acceptOutfit"
         android:text="@string/new_outfit"
         app:layout_constraintBottom_toBottomOf="parent"
